@@ -1,0 +1,129 @@
+Step-by-Step Workflow for the Bot
+Step 1: Start the Bot
+Action: User initiates the bot by sending the command /start.
+Bot Response: The bot sends a greeting message.
+Example: "Hello! Welcome to the Content Creation Bot! Let’s get started by gathering some information about you."
+Next: The bot proceeds to collect user information. (if user is new)
+
+Step 2: Collect User Information
+Action: The bot asks the user for their information.
+Questions:
+"What is your name?"
+"What is your surname?"
+"What is your phone number?"
+User Response: The user provides their details (e.g., Name: John, Surname: Doe, Phone: +1234567890).
+Bot Action: The bot stores this information in User table (as shown on the whiteboard: Table user with columns user_id, full_name, phone_number, instagram_username, instagram_password).
+Example: user_id: 001, full_name: John Doe, phone_number: +1234567890.
+Next: The bot displays a menu with buttons.
+
+Step 3: Display Main Menu
+Bot Action: The bot presents a menu with the following buttons:
+"Create Content"
+"Generate Image"
+"Upload Instagram"
+"Saved Contents"
+Include a "Back" button to return to the main menu at any point.
+User Action: The user selects an option. Let’s assume the user presses "Create Content" first.
+
+Step 4: Create Content Flow
+Bot Action: The bot asks, "In which theme would you like to make content?"
+User Response: The user writes their desired theme (e.g., "Fitness Tips").
+Bot Action: The bot generates content based on the theme. (We will use ChatGPT4o-Realtime API model)
+Example: For "Fitness Tips," the bot might create: "💪 5 Quick Fitness Tips for Beginners: 1. Start with 10-minute workouts. 2. Stay hydrated. 3. Focus on form, not weight. 4. Rest is key. 5. Track your progress! #Fitness #Health"
+Bot Action: The bot presents the generated content with three inline buttons:
+"Save"
+"Don’t Save"
+"Edit"
+User Action:
+If the user presses "Save":
+The content is stored in the "Saved Contents" section (save to Contents table user_id, content).
+Bot Response: "Content saved successfully! Returning to the main menu."
+If the user presses "Don’t Save":
+The content is discarded.
+Bot Response: "Content not saved. Returning to the main menu."
+Next: The user is taken back to the main menu.
+If the user presses "Edit":
+We will ask to give extra information to change it and then we will return updated content (as above)
+
+Step 5: Generate Image Flow
+User Action: From the main menu, the user selects "Generate Image".
+Bot Action: The bot asks, "What kind of image would you like to generate? Please describe the theme or idea."
+User Response: The user writes their idea (e.g., "A sunset over a beach with palm trees").
+Bot Action: The bot generates an image based on the description. (We will use ChatGPT DALLE-3 API model)
+Bot Action: The bot presents the generated image with two inline buttons:
+"Save"
+"Don’t Save"
+"Edit"
+User Action:
+If the user presses "Save":
+The image is stored in the "Saved Contents" section (save to Images table user_id, image_id).
+Bot Response: "Image saved successfully! Returning to the main menu."
+If the user presses "Don’t Save":
+The image is discarded.
+Bot Response: "Image not saved. Returning to the main menu."
+Next: The user is taken back to the main menu.
+If the user presses "Edit":
+We will ask to give extra information to change it and then we will return updated content (as above)
+
+
+Step 6: Upload to Instagram Flow
+User Action: From the main menu, the user selects "Upload Instagram".
+Bot Action: The bot asks for the user’s Instagram credentials.
+"Please provide your Instagram username."
+"Please provide your Instagram password."
+User Response: The user provides their credentials (e.g., Username: johndoe, Password: mypassword123).
+Bot Action: The bot stores the Instagram credentials securely (in the instagram_username, instagram_password columns of the user table) and logs in to the user’s Instagram account.
+Bot Action: The bot presents a submenu with three buttons:
+"Back" (returns to the main menu)
+"Check" (to view scheduled posts)
+"Upload" (to upload new content)
+
+Step 7: Upload Content to Instagram
+User Action: The user presses the "Upload" button.
+Bot Action: The bot presents 3 buttons:
+"Reels"
+"Post"
+"Back"
+User Action: The user selects either "Reels" or "Post". Let’s assume the user selects "Reels".
+Bot Action:
+The bot asks, "Please send the video or image you’d like to upload as a Reels."
+User Response: The user uploads a video (e.g., a 15-second workout clip) or image.
+Bot Action: The bot asks, "Would you like to add a description to your Reel?"
+Inline buttons: "Yes" or "No".
+User Action:
+If the user selects "Yes":
+The bot prompts: "Please write your description (max 150 characters)."
+User Response: "Quick morning workout! 🏋️ #Fitness #Reels" (within 150 characters).
+If the description exceeds 150 characters, the bot responds: "Description is too long! Please keep it under 150 characters."
+If the user selects "No":
+The bot skips the description step.
+Bot Action: The bot asks, "When would you like to schedule this upload? Please provide the date and time (e.g., 2025-04-05 14:00)."
+User Response: The user provides the date and time (e.g., 2025-04-05 14:00) it shouldn't be past time.
+Bot Action: The bot schedules the upload.
+Bot Response: "Reel scheduled successfully for 2025-04-05 14:00! Returning to the main menu." (we will save it to Scheduled table user_id, attachment, time, caption and send it when the time is come)
+Next: The user is taken back to the main menu.
+
+Step 8: Check Scheduled Content
+User Action: From the Instagram submenu, the user presses the "Check" button.
+Bot Action: The bot retrieves any previously scheduled content for the user (we will save it to Scheduled table user_id, attachment, time, caption) with pagination of every content one by one with inline buttons next, prev, delete (to delete from db), cancel(to return back to main menu).
+Example: "You have 1 scheduled Reel: 'Quick morning workout! 🏋️ #Fitness #Reels' for 2025-04-05 14:00."
+User Action:
+If the user presses "Delete":
+The scheduled content is removed.
+Bot Response: "Scheduled content canceled. Returning to the Instagram menu."
+If the user does nothing, they can press "Back" to return to the Instagram submenu.
+Next: The user is taken back to the Instagram submenu or main menu.
+
+Step 9: Saved Contents
+User Action: From the main menu, the user selects "Saved Contents".
+Bot Action: We will provide 2 buttons "Content" or "Images":
+If user choose Content:
+The bot retrieves all saved content for the user (stored in a table with user_id, content).
+Example: "1. '5 Quick Fitness Tips...' (with pagination of each of them one by one with buttons next, prev, delete, cancel)
+Bot Action: The bot allows the user to view or delete saved items.
+If user choose Images
+The bot retrieves all saved content for the user (stored in a table with user_id, image_id).
+Example: "1. Image from DB (with pagination of each of them one by one with buttons next, prev, delete, cancel)
+Bot Action: The bot allows the user to view or delete saved items.
+
+
