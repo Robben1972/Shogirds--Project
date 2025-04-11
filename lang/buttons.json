@@ -1,0 +1,42 @@
+{
+    "greetings": {
+        "uz": ["🛠 Sozlamalar", "💼 Xizmatlar", "📥 Obuna bo‘lish", "🤖 Tex. yordam"],
+        "ru": ["🛠 Настройки", "💼 Услуги", "📥 Подписка", "🤖 Тех. помощь"],
+        "en": ["🛠 Settings", "💼 Services", "📥 Subscription", "🤖 Tech. support"]
+    },
+    "settings": {
+        "uz": ["🌐 Tilni o‘zgartirish", "💳 Balans sozlamalari", "🔙 Orqaga"],
+        "ru": ["🌐 Изменить язык", "💳 Настройки баланса", "🔙 Назад"],
+        "en": ["🌐 Change language", "💳 Balance settings", "🔙 Back"]
+    },
+    "services": {
+        "uz": ["📅 Kontent plan yaratish", "🎨 Rasm generatsiya qilish","📚 Story + Reels + Post joylash", "✍️ Storis yozib berish", "🎬 Reels uchun ssenariy yozish", "🧬 Instagram bio yozib berish", "🔙 Orqaga"],
+        "ru": ["📅 Создать контент-план", "🎨 Сгенерировать изображения", "📚 Создать историю + ролики + публикацию", "✍️ Пишите истории", "🎬 Пишите сценарий для роликов", "🧬 Пишите биографию в Instagram", "🔙 Назад"],
+        "en": ["📅 Create a content plan", "🎨 Generate images", "📚 Create Story + Reels + Post", "✍️ Write stories", "🎬 Write a script for Reels", "🧬 Write an Instagram bio", "🔙 Back"]
+    },
+    "back": {
+        "uz": ["🔙 Orqaga"],
+        "ru": ["🔙 Назад"],
+        "en": ["🔙 Back"]
+    },
+    "subscription": {
+        "uz": ["🛒 Sotib olish", "🔙 Orqaga"],
+        "ru": ["🛒 Купить", "🔙 Назад"],
+        "en": ["🛒 Purchase", "🔙 Back"]
+    },
+    "months": {
+        "uz": ["🗓 1 oy","🗓 3 oy","🗓 6 oy"],
+        "ru": ["🗓 1 месяц", "🗓 3 месяца", "🗓 6 месяцев"],
+        "en": ["🗓 1 month", "🗓 3 months", "🗓 6 months"]
+    },
+    "acceptence": {
+        "uz": ["✅ Qabul qilaman","❌ Bekor qilish"],
+        "ru": ["✅ Принять", "❌ Отмена"],
+        "en": ["✅ Accept","❌ Cancel"]
+    },
+    "feedback": {
+        "uz": ["👍 Ha, yoqdi","😐 Neutral","👎 Yo‘q, yoqmadi"],
+        "ru": ["👍 Да, мне понравилось", "😐 Нейтрально", "👎 Нет, мне не понравилось"],
+        "en": ["👍 Yes, I liked it","😐 Neutral","👎 No, I didn't like it"]
+    }
+}
