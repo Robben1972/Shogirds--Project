@@ -1,6 +1,7 @@
 from aiogram.fsm.state import State, StatesGroup
 
 class UserInfo(StatesGroup):
+    language = State()
     name = State()
     surname = State()
     phone = State()
@@ -24,3 +25,6 @@ class InstagramUpload(StatesGroup):
     description_choice = State()
     description = State()
     schedule = State()
+
+class TechSupport(StatesGroup):
+    message = State()

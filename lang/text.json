@@ -1,13 +1,13 @@
 {
     "lang": {
-        "uz": ["🇺🇿 O'zbek tili"],
-        "ru": ["🇷🇺 Русский язык"],
-        "en": ["🇬🇧 English"]
+        "uz": ["O'zingizga maqul tilni tanlang"],
+        "ru": ["Выберите предпочитаемый язык."],
+        "en": ["Choose your preferred language."]
     },
     "greetings": {
-        "uz": ["🛠 Sozlamalar", "💼 Xizmatlar", "📥 Obuna bo‘lish", "🤖 Tex. yordam"],
-        "ru": ["🛠 Настройки", "💼 Услуги", "📥 Подписка", "🤖 Тех. помощь"],
-        "en": ["🛠 Settings", "💼 Services", "📥 Subscription", "🤖 Tech. support"]
+        "uz": ["Assalomu alaykum kerakli bo'limni tanlang"],
+        "ru": ["Здравствуйте, выберите, пожалуйста, нужный раздел."],
+        "en": ["Hello, please select the desired section."]
     },
     "settings": {
         "uz": ["🌐 Tilni o‘zgartirish", "💳 Balans sozlamalari", "🔙 Orqaga"],

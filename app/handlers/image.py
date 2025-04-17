@@ -2,10 +2,11 @@ import os
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.fsm.context import FSMContext
+from aiogram.methods import SendChatAction
 from ..states.states import ImageGeneration
 from ..utils.db import get_session
-from ..models.models import Image
-from ..keyboards.keyboards import main_menu, image_options, remove_keyboard, back_to_main_menu
+from ..models.models import Image, Feedback
+from ..keyboards.keyboards import main_menu, image_options, remove_keyboard, back_to_main_menu, feedback_keyboard
 from openai import OpenAI
 from config import Config
 import requests
@@ -28,6 +29,8 @@ async def process_image_desc(message: Message, state: FSMContext):
         return
     desc = message.text
     await message.answer("Generating image, please wait...", reply_markup=remove_keyboard())
+    # Add sending photo action
+    await message.bot.send_chat_action(chat_id=message.chat.id, action="upload_photo")
     response = client.images.generate(
         model="dall-e-3",
         prompt=desc,
@@ -53,8 +56,9 @@ async def save_image(callback: CallbackQuery, state: FSMContext):
     session.commit()
     session.close()
     await callback.message.edit_reply_markup(reply_markup=None)
-    await callback.message.answer("Image saved successfully! Returning to the main menu.", reply_markup=main_menu())
-    await state.clear()
+    # Ask for feedback
+    await callback.message.answer("Image saved successfully! Did you like the generated image?", reply_markup=feedback_keyboard())
+    await state.update_data(image_id=image.id)
 
 @router.callback_query(F.data == "dont_save_image")
 async def dont_save_image(callback: CallbackQuery, state: FSMContext):
@@ -79,6 +83,8 @@ async def process_image_edit(message: Message, state: FSMContext):
         return
     data = await state.get_data()
     await message.answer("Generating updated image, please wait...", reply_markup=remove_keyboard())
+    # Add sending photo action
+    await message.bot.send_chat_action(chat_id=message.chat.id, action="upload_photo")
     edit_info = message.text
     new_desc = f"additional prompt: {edit_info}"
     response = client.images.generate(
@@ -88,10 +94,12 @@ async def process_image_edit(message: Message, state: FSMContext):
         size="1024x1024"
     )
     image_url = response.data[0].url
-    image_path = os.path.join(Config.MEDIA_DIR, f"{message.from_user.id}_{new_desc[:10]}.jpg")
+    characters = string.ascii_letters + string.digits
+    randomize = ''.join(random.choice(characters) for _ in range(10))
+    image_path = os.path.join(Config.MEDIA_DIR, f"{message.from_user.id}_{randomize}.jpg")
     with open(image_path, 'wb') as f:
         f.write(requests.get(image_url).content)
     if os.path.exists(data['image_path']):
         os.remove(data['image_path'])
     sent_message = await message.answer_photo(FSInputFile(path=image_path), caption=f"Updated for: {new_desc}", reply_markup=image_options())
-    await state.update_data(image_path=image_path, message_id=sent_message.message_id)
+    await state.update_data(image_path=image_path, message_id=sent_message.message_id, description=new_desc)

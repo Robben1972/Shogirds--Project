@@ -10,6 +10,8 @@ class User(Base):
     phone_number = Column(String)
     instagram_username = Column(String)
     instagram_password = Column(String)
+    lang = Column(String, default='en')
+    balance = Column(Integer, default=0)
 
 class Content(Base):
     __tablename__ = 'contents'
@@ -31,3 +33,9 @@ class ScheduledPost(Base):
     time = Column(DateTime)
     caption = Column(String)
     content_type = Column(String)
+
+class Feedback(Base):
+    __tablename__ = 'feedbacks'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, nullable=False)
+    feedback = Column(String, nullable=False)

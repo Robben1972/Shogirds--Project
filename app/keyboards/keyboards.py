@@ -4,7 +4,8 @@ def main_menu():
     return ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="Create Content"), KeyboardButton(text="Generate Image")],
-            [KeyboardButton(text="Upload Instagram"), KeyboardButton(text="Saved Contents")]
+            [KeyboardButton(text="Upload Instagram"), KeyboardButton(text="Saved Contents")],
+            [KeyboardButton(text='Back')]
         ],
         resize_keyboard=True
     )
@@ -68,3 +69,87 @@ def back_to_main_menu():
         ],
         resize_keyboard=True
     )
+
+def language_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="🇺🇿 Uzbek", callback_data="lang_uz"),
+            InlineKeyboardButton(text="🇷🇺 Russian", callback_data="lang_ru"),
+            InlineKeyboardButton(text="🇬🇧 English", callback_data="lang_en"),
+        ]
+    ])
+    return keyboard
+
+def menu_keyboard(lang="en"):
+    buttons = {
+        "en": ["🛠 Settings", "💼 Services", "📥 Subscription", "🤖 Tech. support"],
+        "uz": ["🛠 Sozlamalar", "💼 Xizmatlar", "📥 Obuna", "🤖 Tex. yordam"],
+        "ru": ["🛠 Настройки", "💼 Услуги", "📥 Подписка", "🤖 Тех. поддержка"],
+    }
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=buttons[lang][0], callback_data="menu_settings"),
+            InlineKeyboardButton(text=buttons[lang][1], callback_data="menu_services"),
+        ],
+        [
+            InlineKeyboardButton(text=buttons[lang][2], callback_data="menu_subscription"),
+            InlineKeyboardButton(text=buttons[lang][3], callback_data="menu_tech_support"),
+        ]
+    ])
+    return keyboard
+
+
+def settings_keyboard(lang="en"):
+    buttons = {
+        "en": ["🌐 Change language", "💳 Balance settings", "🔙 Back"],
+        "uz": ["🌐 Tilni o'zgartirish", "💳 Balans sozlamalari", "🔙 Orqaga"],
+        "ru": ["🌐 Сменить язык", "💳 Настройки баланса", "🔙 Назад"],
+    }
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=buttons[lang][0], callback_data="settings_change_language"),
+            InlineKeyboardButton(text=buttons[lang][1], callback_data="settings_balance"),
+        ],
+        [
+            InlineKeyboardButton(text=buttons[lang][2], callback_data="settings_back"),
+        ]
+    ])
+    return keyboard
+
+def balance_keyboard(lang="en"):
+    buttons = {
+        "en": ["💳 Pay", "🔙 Back"],
+        "uz": ["💳 To'lov", "🔙 Orqaga"],
+        "ru": ["💳 Оплатить", "🔙 Назад"],
+    }
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=buttons[lang][0], callback_data="balance_pay"),
+            InlineKeyboardButton(text=buttons[lang][1], callback_data="balance_back"),
+        ]
+    ])
+    return keyboard
+
+def subscription_keyboard(lang="en"):
+    buttons = {
+        "en": ["💳 Pay", "🔙 Back"],
+        "uz": ["💳 To'lov", "🔙 Orqaga"],
+        "ru": ["💳 Оплатить", "🔙 Назад"],
+    }
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=buttons[lang][0], callback_data="subscription_pay"),
+            InlineKeyboardButton(text=buttons[lang][1], callback_data="subscription_back"),
+        ]
+    ])
+    return keyboard
+
+def feedback_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="👍 Like", callback_data="feedback_like"),
+            InlineKeyboardButton(text="👎 Dislike", callback_data="feedback_dislike"),
+            InlineKeyboardButton(text="😐 Neutral", callback_data="feedback_neutral"),
+        ]
+    ])
+    return keyboard
