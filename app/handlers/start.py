@@ -8,9 +8,14 @@ from ..utils.db import get_session
 from ..models.models import User
 from ..keyboards.keyboards import main_menu, contact_keyboard, remove_keyboard, language_keyboard, menu_keyboard, settings_keyboard, balance_keyboard, subscription_keyboard
 import os
+import json
 
 # Load admin ID from environment
 ADMIN_ID = int(os.getenv("ADMIN"))
+
+# Load messages from messages.json
+with open(os.path.join('lang', 'messages.json'), 'r', encoding='utf-8') as f:
+    messages_data = json.load(f)
 
 router = Router()
 
@@ -21,12 +26,15 @@ async def start_command(message: Message, state: FSMContext):
     
     if not user:
         await message.answer(
-            "Hello! Please choose your language:",
-            reply_markup=language_keyboard()
+            messages_data["start"]["en"],
+            reply_markup=language_keyboard(lang="en")
         )
         await state.set_state(UserInfo.language)
     else:
-        await message.answer(f"Welcome back, {user.full_name}!", reply_markup=menu_keyboard(lang=user.lang))
+        await message.answer(
+            messages_data["welcome_back"][user.lang].format(name=user.full_name),
+            reply_markup=menu_keyboard(lang=user.lang)
+        )
     session.close()
 
 @router.callback_query(F.data.startswith("lang_"))
@@ -40,30 +48,45 @@ async def process_language(callback: CallbackQuery, state: FSMContext):
     if current_state == UserInfo.language.state:
         # New user: Proceed to gather info
         await state.update_data(lang=lang)
-        await callback.message.edit_text("Language selected! Let's get started by gathering some information about you.")
-        await callback.message.answer("What is your name?", reply_markup=remove_keyboard())
+        await callback.message.edit_text(messages_data["language_selected"][lang])
+        await callback.message.answer(
+            messages_data["what_is_your_name"][lang],
+            reply_markup=remove_keyboard()
+        )
         await state.set_state(UserInfo.name)
     else:
-        # Existing user: Update language and return to settings
         if user:
             user.lang = lang
             session.commit()
-            await callback.message.edit_text("Language updated!", reply_markup=settings_keyboard(lang=lang))
+            await callback.message.edit_text(
+                messages_data["language_updated"][lang],
+                reply_markup=settings_keyboard(lang=lang)
+            )
         else:
-            await callback.message.edit_text("User not found. Please restart the bot with /start.")
+            await callback.message.edit_text(messages_data["user_not_found"][lang])
     
     session.close()
 
 @router.message(UserInfo.name)
 async def process_name(message: Message, state: FSMContext):
+    data = await state.get_data()
+    lang = data.get("lang", "en")
     await state.update_data(name=message.text)
-    await message.answer("What is your surname?", reply_markup=remove_keyboard())
+    await message.answer(
+        messages_data["what_is_your_surname"][lang],
+        reply_markup=remove_keyboard()
+    )
     await state.set_state(UserInfo.surname)
 
 @router.message(UserInfo.surname)
 async def process_surname(message: Message, state: FSMContext):
+    data = await state.get_data()
+    lang = data.get("lang", "en")
     await state.update_data(surname=message.text)
-    await message.answer("Please share your phone number by pressing the button below:", reply_markup=contact_keyboard())
+    await message.answer(
+        messages_data["share_phone_number"][lang],
+        reply_markup=contact_keyboard(lang=lang)
+    )
     await state.set_state(UserInfo.phone)
 
 @router.message(UserInfo.phone, F.contact)
@@ -85,7 +108,10 @@ async def process_phone(message: Message, state: FSMContext):
     session.commit()
     session.close()
     
-    await message.answer("Information saved! Here's the menu:", reply_markup=menu_keyboard(lang=lang))
+    await message.answer(
+        messages_data["info_saved"][lang],
+        reply_markup=menu_keyboard(lang=lang)
+    )
     await state.clear()
 
 @router.callback_query(F.data == "menu_services")
@@ -94,7 +120,10 @@ async def show_services(callback: CallbackQuery):
     user = session.query(User).filter_by(user_id=callback.from_user.id).first()
     session.close()
     
-    await callback.message.answer("Here are the services:", reply_markup=main_menu())
+    await callback.message.answer(
+        messages_data["services"][user.lang],
+        reply_markup=main_menu(lang=user.lang)
+    )
     await callback.message.delete()
 
 @router.callback_query(F.data == "menu_settings")
@@ -103,7 +132,10 @@ async def show_settings(callback: CallbackQuery):
     user = session.query(User).filter_by(user_id=callback.from_user.id).first()
     session.close()
     
-    await callback.message.edit_text("Settings:", reply_markup=settings_keyboard(lang=user.lang))
+    await callback.message.edit_text(
+        messages_data["settings"][user.lang],
+        reply_markup=settings_keyboard(lang=user.lang)
+    )
 
 @router.callback_query(F.data == "menu_subscription")
 async def show_subscription(callback: CallbackQuery):
@@ -111,12 +143,10 @@ async def show_subscription(callback: CallbackQuery):
     user = session.query(User).filter_by(user_id=callback.from_user.id).first()
     session.close()
     
-    messages = {
-        "en": "Subscription Plans:\n1 Month: $5\n3 Months: $12",
-        "uz": "Obuna Rejalari:\n1 Oy: $5\n3 Oy: $12",
-        "ru": "Планы подписки:\n1 месяц: $5\n3 месяца: $12",
-    }
-    await callback.message.edit_text(messages[user.lang], reply_markup=subscription_keyboard(lang=user.lang))
+    await callback.message.edit_text(
+        messages_data["subscription"][user.lang],
+        reply_markup=subscription_keyboard(lang=user.lang)
+    )
 
 @router.callback_query(F.data == "subscription_back")
 async def subscription_back(callback: CallbackQuery):
@@ -124,7 +154,10 @@ async def subscription_back(callback: CallbackQuery):
     user = session.query(User).filter_by(user_id=callback.from_user.id).first()
     session.close()
     
-    await callback.message.edit_text(f"Welcome back, {user.full_name}!", reply_markup=menu_keyboard(lang=user.lang))
+    await callback.message.edit_text(
+        messages_data["welcome_back"][user.lang].format(name=user.full_name),
+        reply_markup=menu_keyboard(lang=user.lang)
+    )
 
 @router.callback_query(F.data == "menu_tech_support")
 async def show_tech_support(callback: CallbackQuery, state: FSMContext):
@@ -132,12 +165,7 @@ async def show_tech_support(callback: CallbackQuery, state: FSMContext):
     user = session.query(User).filter_by(user_id=callback.from_user.id).first()
     session.close()
     
-    messages = {
-        "en": "Please write your message for tech support:",
-        "uz": "Iltimos, texnik yordam uchun xabaringizni yozing:",
-        "ru": "Пожалуйста, напишите ваше сообщение для техподдержки:",
-    }
-    await callback.message.edit_text(messages[user.lang])
+    await callback.message.edit_text(messages_data["tech_support_prompt"][user.lang])
     await state.set_state(TechSupport.message)
     await state.update_data(user_id=callback.from_user.id, user_lang=user.lang)
 
@@ -156,12 +184,10 @@ async def process_tech_support_message(message: Message, state: FSMContext):
         reply_to_message_id=forwarded_message.message_id
     )
     
-    messages = {
-        "en": "Your message has been sent to tech support. We'll get back to you soon!",
-        "uz": "Xabaringiz texnik yordamga yuborildi. Tez orada sizga javob beramiz!",
-        "ru": "Ваше сообщение отправлено в техподдержку. Мы скоро с вами свяжемся!",
-    }
-    await message.answer(messages[user.lang], reply_markup=menu_keyboard(lang=user.lang))
+    await message.answer(
+        messages_data["tech_support_sent"][user.lang],
+        reply_markup=menu_keyboard(lang=user.lang)
+    )
     await state.clear()
 
 @router.message(F.reply_to_message, F.from_user.id == ADMIN_ID)
@@ -174,21 +200,23 @@ async def handle_admin_reply(message: Message):
         session.close()
         
         if user:
-            messages = {
-                "en": "Tech Support Reply:\n",
-                "uz": "Texnik Yordam Javobi:\n",
-                "ru": "Ответ техподдержки:\n",
-            }
             await message.bot.send_message(
                 user_id,
-                f"{messages[user.lang]}{message.text}",
+                f"{messages_data['tech_support_reply'][user.lang]}{message.text}",
                 reply_markup=menu_keyboard(lang=user.lang)
             )
-            await message.reply("Reply sent to the user.")
+            await message.reply(messages_data["admin_reply_sent"][user.lang])
 
 @router.callback_query(F.data == "settings_change_language")
 async def change_language(callback: CallbackQuery):
-    await callback.message.edit_text("Please choose your language:", reply_markup=language_keyboard())
+    session = get_session()
+    user = session.query(User).filter_by(user_id=callback.from_user.id).first()
+    session.close()
+    
+    await callback.message.edit_text(
+        messages_data["start"][user.lang],  # Reuse the "choose language" message
+        reply_markup=language_keyboard(lang=user.lang)
+    )
 
 @router.callback_query(F.data == "settings_balance")
 async def show_balance(callback: CallbackQuery):
@@ -196,7 +224,10 @@ async def show_balance(callback: CallbackQuery):
     user = session.query(User).filter_by(user_id=callback.from_user.id).first()
     session.close()
     
-    await callback.message.edit_text(f"Your balance: {user.balance}", reply_markup=balance_keyboard(lang=user.lang))
+    await callback.message.edit_text(
+        messages_data["balance"][user.lang].format(balance=user.balance),
+        reply_markup=balance_keyboard(lang=user.lang)
+    )
 
 @router.callback_query(F.data == "settings_back")
 async def settings_back(callback: CallbackQuery):
@@ -204,7 +235,10 @@ async def settings_back(callback: CallbackQuery):
     user = session.query(User).filter_by(user_id=callback.from_user.id).first()
     session.close()
     
-    await callback.message.edit_text(f"Welcome back, {user.full_name}!", reply_markup=menu_keyboard(lang=user.lang))
+    await callback.message.edit_text(
+        messages_data["welcome_back"][user.lang].format(name=user.full_name),
+        reply_markup=menu_keyboard(lang=user.lang)
+    )
 
 @router.callback_query(F.data == "balance_back")
 async def balance_back(callback: CallbackQuery):
@@ -212,4 +246,7 @@ async def balance_back(callback: CallbackQuery):
     user = session.query(User).filter_by(user_id=callback.from_user.id).first()
     session.close()
     
-    await callback.message.edit_text("Settings:", reply_markup=settings_keyboard(lang=user.lang))
+    await callback.message.edit_text(
+        messages_data["settings"][user.lang],
+        reply_markup=settings_keyboard(lang=user.lang)
+    )

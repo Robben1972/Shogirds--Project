@@ -1,0 +1,382 @@
+{
+    "start": {
+        "en": "Hello! Please choose your language:",
+        "uz": "Salom! Iltimos, tilni tanlang:",
+        "ru": "Привет! Пожалуйста, выберите язык:"
+    },
+    "language_selected": {
+        "en": "Language selected! Let's get started by gathering some information about you.",
+        "uz": "Til tanlandi! Keling, siz haqingizda ma'lumot to'plashni boshlaymiz.",
+        "ru": "Язык выбран! Давай начнем с сбора информации о тебе."
+    },
+    "language_updated": {
+        "en": "Language updated!",
+        "uz": "Til yangilandi!",
+        "ru": "Язык обновлен!"
+    },
+    "user_not_found": {
+        "en": "User not found. Please restart the bot with /start.",
+        "uz": "Foydalanuvchi topilmadi. Iltimos, botni /start bilan qayta ishga tushiring.",
+        "ru": "Пользователь не найден. Пожалуйста, перезапустите бот с помощью /start."
+    },
+    "welcome_back": {
+        "en": "Welcome back, {name}!",
+        "uz": "Xush kelibsiz, {name}!",
+        "ru": "Добро пожаловать обратно, {name}!"
+    },
+    "what_is_your_name": {
+        "en": "What is your name?",
+        "uz": "Ismingiz nima?",
+        "ru": "Как вас зовут?"
+    },
+    "what_is_your_surname": {
+        "en": "What is your surname?",
+        "uz": "Familiyangiz nima?",
+        "ru": "Какая у вас фамилия?"
+    },
+    "share_phone_number": {
+        "en": "Please share your phone number by pressing the button below:",
+        "uz": "Iltimos, telefon raqamingizni pastdagi tugma orqali ulashing:",
+        "ru": "Пожалуйста, поделитесь своим номером телефона, нажав на кнопку ниже:"
+    },
+    "info_saved": {
+        "en": "Information saved! Here's the menu:",
+        "uz": "Ma'lumot saqlandi! Mana menyu:",
+        "ru": "Информация сохранена! Вот меню:"
+    },
+    "services": {
+        "en": "Here are the services:",
+        "uz": "Mana xizmatlar:",
+        "ru": "Вот услуги:"
+    },
+    "settings": {
+        "en": "Settings:",
+        "uz": "Sozlamalar:",
+        "ru": "Настройки:"
+    },
+    "subscription": {
+        "en": "Subscription Plans:\n1 Month: $5\n3 Months: $12",
+        "uz": "Obuna Rejalari:\n1 Oy: $5\n3 Oy: $12",
+        "ru": "Планы подписки:\n1 месяц: $5\n3 месяца: $12"
+    },
+    "tech_support_prompt": {
+        "en": "Please write your message for tech support:",
+        "uz": "Iltimos, texnik yordam uchun xabaringizni yozing:",
+        "ru": "Пожалуйста, напишите ваше сообщение для техподдержки:"
+    },
+    "tech_support_sent": {
+        "en": "Your message has been sent to tech support. We'll get back to you soon!",
+        "uz": "Xabaringiz texnik yordamga yuborildi. Tez orada sizga javob beramiz!",
+        "ru": "Ваше сообщение отправлено в техподдержку. Мы скоро с вами свяжемся!"
+    },
+    "tech_support_reply": {
+        "en": "Tech Support Reply:\n",
+        "uz": "Texnik Yordam Javobi:\n",
+        "ru": "Ответ техподдержки:\n"
+    },
+    "admin_reply_sent": {
+        "en": "Reply sent to the user.",
+        "uz": "Javob foydalanuvchiga yuborildi.",
+        "ru": "Ответ отправлен пользователю."
+    },
+    "balance": {
+        "en": "Your balance: {balance}",
+        "uz": "Sizning balansingiz: {balance}",
+        "ru": "Ваш баланс: {balance}"
+    },
+    "back_to_menu": {
+        "en": "Back to menu",
+        "uz": "Menyuga qaytish",
+        "ru": "Вернуться в меню"
+    },
+    "heres_the_menu": {
+        "en": "Here's the menu:",
+        "uz": "Mana menyu:",
+        "ru": "Вот меню:"
+    },
+    "content_theme_prompt": {
+        "en": "In which theme would you like to make content?",
+        "uz": "Qaysi mavzuda kontent yaratmoqchisiz?",
+        "ru": "На какую тему вы хотите создать контент?"
+    },
+    "generating_content": {
+        "en": "Generating content, please wait...",
+        "uz": "Kontent yaratilmoqda, iltimos kuting...",
+        "ru": "Создается контент, пожалуйста, подождите..."
+    },
+    "content_saved": {
+        "en": "Content saved successfully! Did you like the generated content?",
+        "uz": "Kontent muvaffaqiyatli saqlandi! Yaratilgan kontent sizga yoqdimi?",
+        "ru": "Контент успешно сохранен! Вам понравился созданный контент?"
+    },
+    "content_not_saved": {
+        "en": "Content not saved. Returning to the main menu.",
+        "uz": "Kontent saqlanmadi. Asosiy menyuga qaytish.",
+        "ru": "Контент не сохранен. Возврат в главное меню."
+    },
+    "edit_content_prompt": {
+        "en": "Please provide extra information to edit the content:",
+        "uz": "Iltimos, kontentni tahrir qilish uchun qo'shimcha ma'lumot bering:",
+        "ru": "Пожалуйста, предоставьте дополнительную информацию для редактирования контента:"
+    },
+    "generating_edited_content": {
+        "en": "Generating edited content, please wait...",
+        "uz": "Tahrir qilingan kontent yaratilmoqda, iltimos kuting...",
+        "ru": "Создается отредактированный контент, пожалуйста, подождите..."
+    },
+    "feedback_thanks": {
+        "en": "Thank you for your feedback! Returning to the main menu.",
+        "uz": "Fikringiz uchun rahmat! Asosiy menyuga qaytish.",
+        "ru": "Спасибо за ваш отзыв! Возврат в главное меню."
+    },
+    "image_theme_prompt": {
+        "en": "What kind of image would you like to generate? Please describe the theme or idea.",
+        "uz": "Qanday rasm yaratmoqchisiz? Iltimos, mavzu yoki g‘oyani tasvirlab bering.",
+        "ru": "Какое изображение вы хотите создать? Пожалуйста, опишите тему или идею."
+    },
+    "generating_image": {
+        "en": "Generating image, please wait...",
+        "uz": "Rasm yaratilmoqda, iltimos kuting...",
+        "ru": "Создается изображение, пожалуйста, подождите..."
+    },
+    "image_caption": {
+        "en": "Generated for: {desc}",
+        "uz": "Ushbu uchun yaratildi: {desc}",
+        "ru": "Создано для: {desc}"
+    },
+    "image_saved": {
+        "en": "Image saved successfully! Did you like the generated image?",
+        "uz": "Rasm muvaffaqiyatli saqlandi! Yaratilgan rasm sizga yoqdimi?",
+        "ru": "Изображение успешно сохранено! Вам понравилось созданное изображение?"
+    },
+    "image_not_saved": {
+        "en": "Image not saved. Returning to the main menu.",
+        "uz": "Rasm saqlanmadi. Asosiy menyuga qaytish.",
+        "ru": "Изображение не сохранено. Возврат в главное меню."
+    },
+    "edit_image_prompt": {
+        "en": "Please provide extra information to edit the image description:",
+        "uz": "Iltimos, rasm tasvirini tahrir qilish uchun qo'shimcha ma'lumot bering:",
+        "ru": "Пожалуйста, предоставьте дополнительную информацию для редактирования описания изображения:"
+    },
+    "generating_edited_image": {
+        "en": "Generating updated image, please wait...",
+        "uz": "Yangilangan rasm yaratilmoqda, iltimos kuting...",
+        "ru": "Создается обновленное изображение, пожалуйста, подождите..."
+    },
+    "edit_image_caption": {
+        "en": "Updated for: {desc}",
+        "uz": "Ushbu uchun yangilandi: {desc}",
+        "ru": "Обновлено для: {desc}"
+    },
+    "ig_username_prompt": {
+        "en": "Please provide your Instagram username:",
+        "uz": "Iltimos, Instagram foydalanuvchi nomingizni kiriting:",
+        "ru": "Пожалуйста, укажите ваше имя пользователя в Instagram:"
+    },
+    "ig_account_linked": {
+        "en": "Your Instagram account is already linked.",
+        "uz": "Sizning Instagram hisobingiz allaqachon ulangan.",
+        "ru": "Ваш аккаунт Instagram уже привязан."
+    },
+    "ig_options": {
+        "en": "Instagram options:",
+        "uz": "Instagram imkoniyatlari:",
+        "ru": "Опции Instagram:"
+    },
+    "ig_password_prompt": {
+        "en": "Please provide your Instagram password:",
+        "uz": "Iltimos, Instagram parolingizni kiriting:",
+        "ru": "Пожалуйста, укажите ваш пароль Instagram:"
+    },
+    "ig_logging_in": {
+        "en": "Logging in to Instagram...",
+        "uz": "Instagramga kirilmoqda...",
+        "ru": "Вход в Instagram..."
+    },
+    "ig_credentials_saved": {
+        "en": "Instagram credentials saved and verified! Options:",
+        "uz": "Instagram ma'lumotlari saqlandi va tasdiqlandi! Imkoniyatlar:",
+        "ru": "Учетные данные Instagram сохранены и проверены! Опции:"
+    },
+    "ig_verification_required": {
+        "en": "Instagram requires a verification code. Please check your email or SMS and enter the code here:",
+        "uz": "Instagram tasdiqlash kodini talab qiladi. Iltimos, elektron pochta yoki SMS-ni tekshiring va kodni shu yerga kiriting:",
+        "ru": "Instagram требует код подтверждения. Пожалуйста, проверьте вашу почту или SMS и введите код здесь:"
+    },
+    "ig_login_failed": {
+        "en": "Failed to login: {error}",
+        "uz": "Kirish amalga oshmadi: {error}",
+        "ru": "Не удалось войти: {error}"
+    },
+    "ig_verification_not_found": {
+        "en": "Verification process not found. Please start over.",
+        "uz": "Tasdiqlash jarayoni topilmadi. Iltimos, qaytadan boshlang.",
+        "ru": "Процесс верификации не найден. Пожалуйста, начните заново."
+    },
+    "ig_verification_success": {
+        "en": "Instagram credentials verified successfully! Options:",
+        "uz": "Instagram ma'lumotlari muvaffaqiyatli tasdiqlandi! Imkoniyatlar:",
+        "ru": "Учетные данные Instagram успешно проверены! Опции:"
+    },
+    "ig_invalid_verification_code": {
+        "en": "Invalid verification code or challenge error. Please try again.",
+        "uz": "Noto'g'ri tasdiqlash kodi yoki xatolik. Iltimos, qayta urinib ko'ring.",
+        "ru": "Неверный код подтверждения или ошибка. Пожалуйста, попробуйте снова."
+    },
+    "ig_verification_failed": {
+        "en": "Verification failed. Please try again or start over.",
+        "uz": "Tasdiqlash amalga oshmadi. Iltimos, qayta urinib ko'ring yoki qaytadan boshlang.",
+        "ru": "Верификация не удалась. Пожалуйста, попробуйте снова или начните заново."
+    },
+    "ig_upload_type_prompt": {
+        "en": "Choose upload type:",
+        "uz": "Yuklash turini tanlang:",
+        "ru": "Выберите тип загрузки:"
+    },
+    "ig_main_menu": {
+        "en": "Main menu:",
+        "uz": "Asosiy menyu:",
+        "ru": "Главное меню:"
+    },
+    "ig_no_scheduled_posts": {
+        "en": "No scheduled posts found.",
+        "uz": "Rejalashtirilgan postlar topilmadi.",
+        "ru": "Запланированных постов не найдено."
+    },
+    "ig_file_not_found": {
+        "en": "The file for this post no longer exists.",
+        "uz": "Ushbu post uchun fayl endi mavjud emas.",
+        "ru": "Файл для этого поста больше не существует."
+    },
+    "ig_scheduled_caption": {
+        "en": "Caption: {caption}\nScheduled for: {time}",
+        "uz": "Izoh: {caption}\nRejalashtirilgan vaqt: {time}",
+        "ru": "Подпись: {caption}\nЗапланировано на: {time}"
+    },
+    "ig_no_more_scheduled": {
+        "en": "No more scheduled posts.",
+        "uz": "Boshqa rejalashtirilgan postlar yo'q.",
+        "ru": "Больше нет запланированных постов."
+    },
+    "ig_first_scheduled": {
+        "en": "This is the first scheduled post.",
+        "uz": "Bu birinchi rejalashtirilgan post.",
+        "ru": "Это первый запланированный пост."
+    },
+    "ig_media_prompt": {
+        "en": "Please send the photo or video you'd like to upload as a {content_type}:",
+        "uz": "Iltimos, {content_type} sifatida yuklamoqchi bo'lgan foto yoki videongizni yuboring:",
+        "ru": "Пожалуйста, отправьте фото или видео, которое вы хотите загрузить как {content_type}:"
+    },
+    "ig_media_invalid": {
+        "en": "Please send a photo or video!",
+        "uz": "Iltimos, foto yoki video yuboring!",
+        "ru": "Пожалуйста, отправьте фото или видео!"
+    },
+    "ig_description_choice": {
+        "en": "Would you like to add a description?",
+        "uz": "Izoh qo'shishni xohlaysizmi?",
+        "ru": "Хотите добавить описание?"
+    },
+    "ig_description_prompt": {
+        "en": "Please write your description (max 150 characters):",
+        "uz": "Iltimos, izohingizni yozing (maksimal 150 belgi):",
+        "ru": "Пожалуйста, напишите ваше описание (максимум 150 символов):"
+    },
+    "ig_description_too_long": {
+        "en": "Description is too long! Please keep it under 150 characters.",
+        "uz": "Izoh juda uzun! Iltimos, 150 belgidan kam tuting.",
+        "ru": "Описание слишком длинное! Пожалуйста, держите его до 150 символов."
+    },
+    "ig_schedule_prompt": {
+        "en": "When would you like to schedule this upload? (e.g., 2025-04-05 14:00)",
+        "uz": "Bu yuklamani qachon rejalashtirmoqchisiz? (masalan, 2025-04-05 14:00)",
+        "ru": "Когда вы хотите запланировать эту загрузку? (например, 2025-04-05 14:00)"
+    },
+    "ig_logout_success": {
+        "en": "You have been logged out of Instagram.",
+        "uz": "Siz Instagramdan chiqdingiz.",
+        "ru": "Вы вышли из Instagram."
+    },
+    "ig_schedule_past_error": {
+        "en": "Cannot schedule in the past!",
+        "uz": "O'tmishda rejalashtirish mumkin emas!",
+        "ru": "Нельзя запланировать в прошлом!"
+    },
+    "ig_schedule_success": {
+        "en": "{content_type} scheduled successfully for {time}!",
+        "uz": "{content_type} muvaffaqiyatli {time} ga rejalashtirildi!",
+        "ru": "{content_type} успешно запланировано на {time}!"
+    },
+    "ig_schedule_format_error": {
+        "en": "Invalid format! Use YYYY-MM-DD HH:MM",
+        "uz": "Noto'g'ri format! YYYY-MM-DD HH:MM dan foydalaning",
+        "ru": "Неверный формат! Используйте YYYY-MM-DD HH:MM"
+    },
+    "saved_view_prompt": {
+        "en": "Here you can see your saved Images and Contents",
+        "uz": "Bu yerda saqlangan rasmlar va kontentlaringizni ko'rishingiz mumkin",
+        "ru": "Здесь вы можете увидеть сохраненные изображения и контент"
+    },
+    "saved_choose_view": {
+        "en": "Choose what to view:",
+        "uz": "Nimalarni ko'rishni tanlang:",
+        "ru": "Выберите, что посмотреть:"
+    },
+    "saved_no_content": {
+        "en": "No saved content.",
+        "uz": "Saqlangan kontent yo'q.",
+        "ru": "Нет сохраненного контента."
+    },
+    "saved_no_images": {
+        "en": "No saved images.",
+        "uz": "Saqlangan rasmlar yo'q.",
+        "ru": "Нет сохраненных изображений."
+    },
+    "saved_content_caption": {
+        "en": "Content {current}/{total}:\n{content}",
+        "uz": "Kontent {current}/{total}:\n{content}",
+        "ru": "Контент {current}/{total}:\n{content}"
+    },
+    "saved_no_more_content": {
+        "en": "No more content.",
+        "uz": "Boshqa kontent yo'q.",
+        "ru": "Больше нет контента."
+    },
+    "saved_no_more_images": {
+        "en": "No more images.",
+        "uz": "Boshqa rasmlar yo'q.",
+        "ru": "Больше нет изображений."
+    },
+    "saved_first_content": {
+        "en": "This is the first content.",
+        "uz": "Bu birinchi kontent.",
+        "ru": "Это первый контент."
+    },
+    "saved_first_image": {
+        "en": "This is the first image.",
+        "uz": "Bu birinchi rasm.",
+        "ru": "Это первое изображение."
+    },
+    "saved_content_deleted": {
+        "en": "Content deleted. Content {current}/{total}:\n{content}",
+        "uz": "Kontent o'chirildi. Kontent {current}/{total}:\n{content}",
+        "ru": "Контент удален. Контент {current}/{total}:\n{content}"
+    },
+    "saved_no_content_left": {
+        "en": "No more content left.",
+        "uz": "Boshqa kontent qolmadi.",
+        "ru": "Больше нет контента."
+    },
+    "saved_no_images_left": {
+        "en": "No more images left.",
+        "uz": "Boshqa rasmlar qolmadi.",
+        "ru": "Больше нет изображений."
+    },
+    "saved_return_to_main": {
+        "en": "Returning to main menu.",
+        "uz": "Asosiy menyuga qaytish.",
+        "ru": "Возврат в главное меню."
+    }
+}

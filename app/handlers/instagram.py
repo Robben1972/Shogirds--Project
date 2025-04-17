@@ -9,35 +9,68 @@ from ..keyboards.keyboards import main_menu, instagram_submenu, upload_type, yes
 from config import Config
 from instagrapi import Client
 from instagrapi.exceptions import ChallengeRequired, ClientError
-from aiogram.types import  InlineKeyboardMarkup, InlineKeyboardButton
-
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+import json
 
 router = Router()
+
+# Load messages and buttons
+with open(os.path.join('lang', 'messages.json'), 'r', encoding='utf-8') as f:
+    messages_data = json.load(f)
+
+with open(os.path.join('lang', 'buttons.json'), 'r', encoding='utf-8') as f:
+    buttons_data = json.load(f)
 
 SESSIONS_DIR = "sessions"
 os.makedirs(SESSIONS_DIR, exist_ok=True)
 challenge_clients = {}
 
-@router.message(F.text == "Upload Instagram")
+@router.message(lambda message: message.text in [
+    buttons_data["services"]["en"][2],  # Create Story + Reels + Post
+    buttons_data["services"]["uz"][2],
+    buttons_data["services"]["ru"][2]
+])
 async def instagram_menu(message: Message, state: FSMContext):
     session = get_session()
     user = session.query(User).filter_by(user_id=message.from_user.id).first()
     session.close()
     if not user.instagram_username:
-        await message.answer("Please provide your Instagram username:", reply_markup=back_to_main_menu())
+        await message.answer(
+            messages_data["ig_username_prompt"][user.lang],
+            reply_markup=back_to_main_menu(lang=user.lang)
+        )
         await state.set_state(InstagramAuth.username)
     else:
-        await message.answer("Your Instagram account is already linked.", reply_markup=remove_keyboard())
-        await message.answer("Instagram options:", reply_markup=instagram_submenu())
+        await message.answer(
+            messages_data["ig_account_linked"][user.lang],
+            reply_markup=remove_keyboard()
+        )
+        await message.answer(
+            messages_data["ig_options"][user.lang],
+            reply_markup=instagram_submenu(lang=user.lang)
+        )
 
 @router.message(InstagramAuth.username)
 async def process_username(message: Message, state: FSMContext):
-    if message.text == "Back":
-        await message.answer("Returning to the main menu.", reply_markup=main_menu())
+    session = get_session()
+    user = session.query(User).filter_by(user_id=message.from_user.id).first()
+    session.close()
+    
+    # Check if the user pressed "Back"
+    back_buttons = [buttons_data["back"]["en"][0], buttons_data["back"]["uz"][0], buttons_data["back"]["ru"][0]]
+    if message.text in back_buttons:
+        await message.answer(
+            messages_data["back_to_menu"][user.lang],
+            reply_markup=main_menu(lang=user.lang)
+        )
         await state.clear()
         return
+
     await state.update_data(username=message.text)
-    await message.answer("Please provide your Instagram password:", reply_markup=back_to_main_menu())
+    await message.answer(
+        messages_data["ig_password_prompt"][user.lang],
+        reply_markup=back_to_main_menu(lang=user.lang)
+    )
     await state.set_state(InstagramAuth.password)
 
 def telegram_challenge_code_handler(username, choice):
@@ -45,10 +78,20 @@ def telegram_challenge_code_handler(username, choice):
 
 @router.message(InstagramAuth.password)
 async def process_password(message: Message, state: FSMContext):
-    if message.text == "Back":
-        await message.answer("Returning to the main menu.", reply_markup=main_menu())
+    session = get_session()
+    user = session.query(User).filter_by(user_id=message.from_user.id).first()
+    session.close()
+
+    # Check if the user pressed "Back"
+    back_buttons = [buttons_data["back"]["en"][0], buttons_data["back"]["uz"][0], buttons_data["back"]["ru"][0]]
+    if message.text in back_buttons:
+        await message.answer(
+            messages_data["back_to_menu"][user.lang],
+            reply_markup=main_menu(lang=user.lang)
+        )
         await state.clear()
         return
+
     data = await state.get_data()
     username = data['username']
     password = message.text
@@ -57,7 +100,10 @@ async def process_password(message: Message, state: FSMContext):
     cli.challenge_code_handler = telegram_challenge_code_handler
 
     try:
-        await message.answer("Logging in to Instagram...", reply_markup=remove_keyboard())
+        await message.answer(
+            messages_data["ig_logging_in"][user.lang],
+            reply_markup=remove_keyboard()
+        )
         cli.login(username, password)
         cli.dump_settings(os.path.join(SESSIONS_DIR, f"{username}_session.json"))
         session = get_session()
@@ -67,22 +113,36 @@ async def process_password(message: Message, state: FSMContext):
         session.commit()
         session.close()
 
-        await message.answer("Instagram credentials saved and verified! Options:", 
-                           reply_markup=instagram_submenu())
+        await message.answer(
+            messages_data["ig_credentials_saved"][user.lang],
+            reply_markup=instagram_submenu(lang=user.lang)
+        )
         await state.clear()
 
     except ChallengeRequired:
         challenge_clients[message.from_user.id] = (cli, username, password)
-        await message.answer("Instagram requires a verification code. Please check your email or SMS and enter the code here:")
+        await message.answer(
+            messages_data["ig_verification_required"][user.lang]
+        )
         await state.set_state(InstagramAuth.verification_code)
     except Exception as e:
-        await message.answer(f"Failed to login: {e}", reply_markup=main_menu())
+        await message.answer(
+            messages_data["ig_login_failed"][user.lang].format(error=e),
+            reply_markup=main_menu(lang=user.lang)
+        )
         await state.clear()
 
 @router.message(InstagramAuth.verification_code)
 async def process_verification_code(message: Message, state: FSMContext):
+    session = get_session()
+    user = session.query(User).filter_by(user_id=message.from_user.id).first()
+    session.close()
+
     if message.from_user.id not in challenge_clients:
-        await message.answer("Verification process not found. Please start over.", reply_markup=main_menu())
+        await message.answer(
+            messages_data["ig_verification_not_found"][user.lang],
+            reply_markup=main_menu(lang=user.lang)
+        )
         await state.clear()
         return
 
@@ -111,8 +171,10 @@ async def process_verification_code(message: Message, state: FSMContext):
 
             del challenge_clients[message.from_user.id]
 
-            await message.answer("Instagram credentials verified successfully! Options:", 
-                               reply_markup=instagram_submenu())
+            await message.answer(
+                messages_data["ig_verification_success"][user.lang],
+                reply_markup=instagram_submenu(lang=user.lang)
+            )
             await state.clear()
             return
 
@@ -129,127 +191,216 @@ async def process_verification_code(message: Message, state: FSMContext):
 
         del challenge_clients[message.from_user.id]
 
-        await message.answer("Instagram credentials verified successfully! Options:", 
-                           reply_markup=instagram_submenu())
+        await message.answer(
+            messages_data["ig_verification_success"][user.lang],
+            reply_markup=instagram_submenu(lang=user.lang)
+        )
         await state.clear()
 
     except ClientError as e:
-        await message.answer(f"Invalid verification code or challenge error. Please try again", reply_markup=main_menu())
+        await message.answer(
+            messages_data["ig_invalid_verification_code"][user.lang],
+            reply_markup=main_menu(lang=user.lang)
+        )
         return
     except Exception as e:
-        await message.answer(f"Verification failed. Please try again or start over.", reply_markup=main_menu())
+        await message.answer(
+            messages_data["ig_verification_failed"][user.lang],
+            reply_markup=main_menu(lang=user.lang)
+        )
 
 @router.callback_query(F.data == "upload_ig")
 async def upload_menu(callback: CallbackQuery):
+    session = get_session()
+    user = session.query(User).filter_by(user_id=callback.from_user.id).first()
+    session.close()
     await callback.message.edit_reply_markup(reply_markup=None)
-    await callback.message.answer("Choose upload type:", reply_markup=upload_type())
+    await callback.message.answer(
+        messages_data["ig_upload_type_prompt"][user.lang],
+        reply_markup=upload_type(lang=user.lang)
+    )
 
 @router.callback_query(F.data == "back_to_ig")
 async def back_to_instagram_menu(callback: CallbackQuery):
+    session = get_session()
+    user = session.query(User).filter_by(user_id=callback.from_user.id).first()
+    session.close()
     await callback.message.edit_reply_markup(reply_markup=None)
-    await callback.message.answer("Instagram options:", reply_markup=instagram_submenu())
+    await callback.message.answer(
+        messages_data["ig_options"][user.lang],
+        reply_markup=instagram_submenu(lang=user.lang)
+    )
 
 @router.callback_query(F.data == "back_to_main")
 async def back_to_main(callback: CallbackQuery):
+    session = get_session()
+    user = session.query(User).filter_by(user_id=callback.from_user.id).first()
+    session.close()
     await callback.message.edit_reply_markup(reply_markup=None)
-    await callback.message.answer("Main menu:", reply_markup=main_menu())
+    await callback.message.answer(
+        messages_data["ig_main_menu"][user.lang],
+        reply_markup=main_menu(lang=user.lang)
+    )
 
-def get_scheduled_pagination_keyboard(current_index, total_items, post_id):
+def get_scheduled_pagination_keyboard(current_index, total_items, post_id, lang="en"):
     buttons = []
     if current_index > 0:
-        buttons.append(InlineKeyboardButton(text="Previous", callback_data=f"prev_scheduled_{current_index}_{post_id}"))
+        buttons.append(InlineKeyboardButton(text=buttons_data["back"][lang][0].replace("🔙 ", "⬅️ "), callback_data=f"prev_scheduled_{current_index}_{post_id}"))
     if current_index < total_items - 1:
-        buttons.append(InlineKeyboardButton(text="Next", callback_data=f"next_scheduled_{current_index}_{post_id}"))
-    buttons.append(InlineKeyboardButton(text="Delete", callback_data=f"delete_scheduled_{current_index}_{post_id}"))
-    buttons.append(InlineKeyboardButton(text="Back", callback_data="back_to_ig"))
+        buttons.append(InlineKeyboardButton(text=buttons_data["back"][lang][0].replace("🔙 ", "➡️ ").replace("Back", "Next").replace("Orqaga", "Keyingi").replace("Назад", "Далее"), callback_data=f"next_scheduled_{current_index}_{post_id}"))
+    buttons.append(InlineKeyboardButton(text=buttons_data["acceptence"][lang][1].replace("❌ ", "🗑️ ").replace("Cancel", "Delete").replace("Bekor qilish", "O'chirish").replace("Отмена", "Удалить"), callback_data=f"delete_scheduled_{current_index}_{post_id}"))
+    buttons.append(InlineKeyboardButton(text=buttons_data["back"][lang][0], callback_data="back_to_ig"))
     return InlineKeyboardMarkup(inline_keyboard=[buttons])
 
 @router.callback_query(F.data == "check_scheduled")
 async def check_scheduled(callback: CallbackQuery, state: FSMContext):
     session = get_session()
+    user = session.query(User).filter_by(user_id=callback.from_user.id).first()
     posts = session.query(ScheduledPost).filter_by(user_id=callback.from_user.id).order_by(ScheduledPost.time).all()
     session.close()
 
     await callback.message.edit_reply_markup(reply_markup=None)
 
     if not posts:
-        await callback.message.answer("No scheduled posts found.", reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(text="Back", callback_data="back_to_ig")]
-            ]
-        ))
+        await callback.message.answer(
+            messages_data["ig_no_scheduled_posts"][user.lang],
+            reply_markup=InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [InlineKeyboardButton(text=buttons_data["back"][user.lang][0], callback_data="back_to_ig")]
+                ]
+            )
+        )
         return
 
     await state.update_data(scheduled_posts=[p.id for p in posts], scheduled_index=0)
     post = posts[0]
 
     if not os.path.exists(post.file_path):
-        await callback.message.answer("The file for this post no longer exists.", reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(text="Back", callback_data="back_to_ig")]
-            ]
-        ))
+        await callback.message.answer(
+            messages_data["ig_file_not_found"][user.lang],
+            reply_markup=InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [InlineKeyboardButton(text=buttons_data["back"][user.lang][0], callback_data="back_to_ig")]
+                ]
+            )
+        )
         return
 
-    keyboard = get_scheduled_pagination_keyboard(0, len(posts), post.id)
+    keyboard = get_scheduled_pagination_keyboard(0, len(posts), post.id, lang=user.lang)
 
     if post.file_path.endswith('.jpg') or post.file_path.endswith('.jpeg') or post.file_path.endswith('.png'):
-        await callback.message.answer_photo(photo=FSInputFile(post.file_path), caption=f"Caption: {post.caption}\nScheduled for: {post.time.strftime('%Y-%m-%d %H:%M')}", reply_markup=keyboard)
+        await callback.message.answer_photo(
+            photo=FSInputFile(post.file_path),
+            caption=messages_data["ig_scheduled_caption"][user.lang].format(
+                caption=post.caption,
+                time=post.time.strftime('%Y-%m-%d %H:%M')
+            ),
+            reply_markup=keyboard
+        )
     else:
-        await callback.message.answer_video(video=FSInputFile(post.file_path), caption=f"Caption: {post.caption}\nScheduled for: {post.time.strftime('%Y-%m-%d %H:%M')}", reply_markup=keyboard)
+        await callback.message.answer_video(
+            video=FSInputFile(post.file_path),
+            caption=messages_data["ig_scheduled_caption"][user.lang].format(
+                caption=post.caption,
+                time=post.time.strftime('%Y-%m-%d %H:%M')
+            ),
+            reply_markup=keyboard
+        )
+
 @router.callback_query(F.data.startswith("next_scheduled_"))
 async def next_scheduled(callback: CallbackQuery, state: FSMContext):
+    session = get_session()
+    user = session.query(User).filter_by(user_id=callback.from_user.id).first()
+    session.close()
+
     data = await state.get_data()
     current_index = int(callback.data.split("_")[2])
     scheduled_posts = data.get("scheduled_posts", [])
     new_index = current_index + 1
 
     if new_index >= len(scheduled_posts):
-        await callback.message.answer("No more scheduled posts.")
+        await callback.message.answer(messages_data["ig_no_more_scheduled"][user.lang])
         return
 
     session = get_session()
     post = session.query(ScheduledPost).get(scheduled_posts[new_index])
     session.close()
 
-    keyboard = get_scheduled_pagination_keyboard(new_index, len(scheduled_posts), post.id)
+    keyboard = get_scheduled_pagination_keyboard(new_index, len(scheduled_posts), post.id, lang=user.lang)
 
     await callback.message.delete()
 
     if post.file_path.endswith('.jpg') or post.file_path.endswith('.jpeg') or post.file_path.endswith('.png'):
-        await callback.message.answer_photo(photo=FSInputFile(post.file_path), caption=f"Caption: {post.caption}\nScheduled for: {post.time.strftime('%Y-%m-%d %H:%M')}", reply_markup=keyboard)
+        await callback.message.answer_photo(
+            photo=FSInputFile(post.file_path),
+            caption=messages_data["ig_scheduled_caption"][user.lang].format(
+                caption=post.caption,
+                time=post.time.strftime('%Y-%m-%d %H:%M')
+            ),
+            reply_markup=keyboard
+        )
     else:
-        await callback.message.answer_video(video=FSInputFile(post.file_path), caption=f"Caption: {post.caption}\nScheduled for: {post.time.strftime('%Y-%m-%d %H:%M')}", reply_markup=keyboard)
+        await callback.message.answer_video(
+            video=FSInputFile(post.file_path),
+            caption=messages_data["ig_scheduled_caption"][user.lang].format(
+                caption=post.caption,
+                time=post.time.strftime('%Y-%m-%d %H:%M')
+            ),
+            reply_markup=keyboard
+        )
 
     await state.update_data(scheduled_index=new_index)
 
 @router.callback_query(F.data.startswith("prev_scheduled_"))
 async def prev_scheduled(callback: CallbackQuery, state: FSMContext):
+    session = get_session()
+    user = session.query(User).filter_by(user_id=callback.from_user.id).first()
+    session.close()
+
     data = await state.get_data()
     current_index = int(callback.data.split("_")[2])
     scheduled_posts = data.get("scheduled_posts", [])
     new_index = current_index - 1
 
     if new_index < 0:
-        await callback.message.answer("This is the first scheduled post.")
+        await callback.message.answer(messages_data["ig_first_scheduled"][user.lang])
         return
 
     session = get_session()
     post = session.query(ScheduledPost).get(scheduled_posts[new_index])
     session.close()
 
-    keyboard = get_scheduled_pagination_keyboard(new_index, len(scheduled_posts), post.id)
+    keyboard = get_scheduled_pagination_keyboard(new_index, len(scheduled_posts), post.id, lang=user.lang)
 
     await callback.message.delete()
 
     if post.file_path.endswith('.jpg') or post.file_path.endswith('.jpeg') or post.file_path.endswith('.png'):
-        await callback.message.answer_photo(photo=FSInputFile(post.file_path), caption=f"Caption: {post.caption}\nScheduled for: {post.time.strftime('%Y-%m-%d %H:%M')}", reply_markup=keyboard)
+        await callback.message.answer_photo(
+            photo=FSInputFile(post.file_path),
+            caption=messages_data["ig_scheduled_caption"][user.lang].format(
+                caption=post.caption,
+                time=post.time.strftime('%Y-%m-%d %H:%M')
+            ),
+            reply_markup=keyboard
+        )
     else:
-        await callback.message.answer_video(video=FSInputFile(post.file_path), caption=f"Caption: {post.caption}\nScheduled for: {post.time.strftime('%Y-%m-%d %H:%M')}", reply_markup=keyboard)
+        await callback.message.answer_video(
+            video=FSInputFile(post.file_path),
+            caption=messages_data["ig_scheduled_caption"][user.lang].format(
+                caption=post.caption,
+                time=post.time.strftime('%Y-%m-%d %H:%M')
+            ),
+            reply_markup=keyboard
+        )
 
     await state.update_data(scheduled_index=new_index)
+
 @router.callback_query(F.data.startswith("delete_scheduled_"))
 async def delete_scheduled(callback: CallbackQuery, state: FSMContext):
+    session = get_session()
+    user = session.query(User).filter_by(user_id=callback.from_user.id).first()
+    session.close()
+
     data = await state.get_data()
     current_index = int(callback.data.split("_")[2])
     scheduled_posts = data.get("scheduled_posts", [])
@@ -269,11 +420,14 @@ async def delete_scheduled(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
 
     if not scheduled_posts:
-        await callback.message.answer("No more scheduled posts.", reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(text="Back", callback_data="back_to_ig")]
-            ]
-        ))
+        await callback.message.answer(
+            messages_data["ig_no_scheduled_posts"][user.lang],
+            reply_markup=InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [InlineKeyboardButton(text=buttons_data["back"][user.lang][0], callback_data="back_to_ig")]
+                ]
+            )
+        )
         await state.clear()
         return
 
@@ -283,32 +437,60 @@ async def delete_scheduled(callback: CallbackQuery, state: FSMContext):
     session.close()
 
     if not os.path.exists(post.file_path):
-        await callback.message.answer("The file for this post no longer exists.", reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(text="Back", callback_data="back_to_ig")]
-            ]
-        ))
+        await callback.message.answer(
+            messages_data["ig_file_not_found"][user.lang],
+            reply_markup=InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [InlineKeyboardButton(text=buttons_data["back"][user.lang][0], callback_data="back_to_ig")]
+                ]
+            )
+        )
         return
 
-    keyboard = get_scheduled_pagination_keyboard(new_index, len(scheduled_posts), post.id)
+    keyboard = get_scheduled_pagination_keyboard(new_index, len(scheduled_posts), post.id, lang=user.lang)
 
     if post.file_path.endswith('.jpg') or post.file_path.endswith('.jpeg') or post.file_path.endswith('.png'):
-        await callback.message.answer_photo(photo=FSInputFile(post.file_path), caption=f"Caption: {post.caption}\nScheduled for: {post.time.strftime('%Y-%m-%d %H:%M')}", reply_markup=keyboard)
+        await callback.message.answer_photo(
+            photo=FSInputFile(post.file_path),
+            caption=messages_data["ig_scheduled_caption"][user.lang].format(
+                caption=post.caption,
+                time=post.time.strftime('%Y-%m-%d %H:%M')
+            ),
+            reply_markup=keyboard
+        )
     else:
-        await callback.message.answer_video(video=FSInputFile(post.file_path), caption=f"Caption: {post.caption}\nScheduled for: {post.time.strftime('%Y-%m-%d %H:%M')}", reply_markup=keyboard)
+        await callback.message.answer_video(
+            video=FSInputFile(post.file_path),
+            caption=messages_data["ig_scheduled_caption"][user.lang].format(
+                caption=post.caption,
+                time=post.time.strftime('%Y-%m-%d %H:%M')
+            ),
+            reply_markup=keyboard
+        )
 
     await state.update_data(scheduled_index=new_index)
 
 @router.callback_query(F.data.in_(["reels", "post", "story"]))
 async def process_upload_type(callback: CallbackQuery, state: FSMContext):
+    session = get_session()
+    user = session.query(User).filter_by(user_id=callback.from_user.id).first()
+    session.close()
+
     await callback.message.edit_reply_markup(reply_markup=None)
     content_type = callback.data
     await state.update_data(content_type=content_type)
-    await callback.message.answer(f"Please send the photo or video you'd like to upload as a {content_type}:", reply_markup=remove_keyboard())
+    await callback.message.answer(
+        messages_data["ig_media_prompt"][user.lang].format(content_type=content_type.capitalize()),
+        reply_markup=remove_keyboard()
+    )
     await state.set_state(InstagramUpload.media)
 
 @router.message(InstagramUpload.media)
 async def process_media(message: Message, state: FSMContext, bot):
+    session = get_session()
+    user = session.query(User).filter_by(user_id=message.from_user.id).first()
+    session.close()
+
     data = await state.get_data()
     os.makedirs(Config.MEDIA_DIR, exist_ok=True)
     caption = message.caption or ""
@@ -322,40 +504,69 @@ async def process_media(message: Message, state: FSMContext, bot):
         file_path = os.path.join(Config.MEDIA_DIR, f"{message.from_user.id}_{file.file_id}.jpg")
         await bot.download_file(file.file_path, file_path)
     else:
-        await message.answer("Please send a photo or video!")
+        await message.answer(messages_data["ig_media_invalid"][user.lang])
         return
     
     await state.update_data(file_path=file_path, description=caption)
     
     if caption:
-        await message.answer("When would you like to schedule this upload? (e.g., 2025-04-05 14:00)", reply_markup=remove_keyboard())
+        await message.answer(
+            messages_data["ig_schedule_prompt"][user.lang],
+            reply_markup=remove_keyboard()
+        )
         await state.set_state(InstagramUpload.schedule)
     else:
-        await message.answer("Would you like to add a description?", reply_markup=yes_no())
+        await message.answer(
+            messages_data["ig_description_choice"][user.lang],
+            reply_markup=yes_no(lang=user.lang)
+        )
         await state.set_state(InstagramUpload.description_choice)
 
 @router.callback_query(F.data == "yes")
 async def ask_description(callback: CallbackQuery, state: FSMContext):
+    session = get_session()
+    user = session.query(User).filter_by(user_id=callback.from_user.id).first()
+    session.close()
+
     await callback.message.edit_reply_markup(reply_markup=None)
-    await callback.message.answer("Please write your description (max 150 characters):", reply_markup=remove_keyboard())
+    await callback.message.answer(
+        messages_data["ig_description_prompt"][user.lang],
+        reply_markup=remove_keyboard()
+    )
     await state.set_state(InstagramUpload.description)
 
 @router.message(InstagramUpload.description)
 async def process_description(message: Message, state: FSMContext):
+    session = get_session()
+    user = session.query(User).filter_by(user_id=message.from_user.id).first()
+    session.close()
+
     if len(message.text) > 150:
-        await message.answer("Description is too long! Please keep it under 150 characters.", reply_markup=remove_keyboard())
+        await message.answer(
+            messages_data["ig_description_too_long"][user.lang],
+            reply_markup=remove_keyboard()
+        )
         return
     await state.update_data(description=message.text)
-    await message.answer("When would you like to schedule this upload? (e.g., 2025-04-05 14:00)", reply_markup=remove_keyboard())
+    await message.answer(
+        messages_data["ig_schedule_prompt"][user.lang],
+        reply_markup=remove_keyboard()
+    )
     await state.set_state(InstagramUpload.schedule)
 
 @router.callback_query(F.data == "no")
 async def skip_description(callback: CallbackQuery, state: FSMContext):
+    session = get_session()
+    user = session.query(User).filter_by(user_id=callback.from_user.id).first()
+    session.close()
+
     await callback.message.edit_reply_markup(reply_markup=None)
     await state.update_data(description="")
-    await callback.message.answer("When would you like to schedule this upload? (e.g., 2025-04-05 14:00)", reply_markup=remove_keyboard())
+    await callback.message.answer(
+        messages_data["ig_schedule_prompt"][user.lang],
+        reply_markup=remove_keyboard()
+    )
     await state.set_state(InstagramUpload.schedule)
-
 
 @router.callback_query(F.data == "log_out")
 async def log_out(callback: CallbackQuery):
@@ -365,21 +576,30 @@ async def log_out(callback: CallbackQuery):
     if user:
         user.instagram_username = None
         user.instagram_password = None
-        
         session.commit()
     
     session.close()
     
     await callback.message.edit_reply_markup(reply_markup=None)
-    await callback.message.answer("You have been logged out of Instagram.", reply_markup=main_menu())
+    await callback.message.answer(
+        messages_data["ig_logout_success"][user.lang],
+        reply_markup=main_menu(lang=user.lang)
+    )
 
 @router.message(InstagramUpload.schedule)
 async def process_schedule(message: Message, state: FSMContext):
     from datetime import datetime
+    session = get_session()
+    user = session.query(User).filter_by(user_id=message.from_user.id).first()
+    session.close()
+
     try:
         schedule_time = datetime.strptime(message.text, "%Y-%m-%d %H:%M")
         if schedule_time < datetime.now():
-            await message.answer("Cannot schedule in the past!", reply_markup=remove_keyboard())
+            await message.answer(
+                messages_data["ig_schedule_past_error"][user.lang],
+                reply_markup=remove_keyboard()
+            )
             return
         data = await state.get_data()
         session = get_session()
@@ -393,7 +613,16 @@ async def process_schedule(message: Message, state: FSMContext):
         session.add(post)
         session.commit()
         session.close()
-        await message.answer(f"{data['content_type'].capitalize()} scheduled successfully for {message.text}!", reply_markup=main_menu())
+        await message.answer(
+            messages_data["ig_schedule_success"][user.lang].format(
+                content_type=data['content_type'].capitalize(),
+                time=message.text
+            ),
+            reply_markup=main_menu(lang=user.lang)
+        )
         await state.clear()
     except ValueError:
-        await message.answer("Invalid format! Use YYYY-MM-DD HH:MM", reply_markup=remove_keyboard())
+        await message.answer(
+            messages_data["ig_schedule_format_error"][user.lang],
+            reply_markup=remove_keyboard()
+        )

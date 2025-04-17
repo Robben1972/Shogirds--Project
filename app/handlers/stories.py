@@ -21,24 +21,10 @@ with open(os.path.join('lang', 'messages.json'), 'r', encoding='utf-8') as f:
 with open(os.path.join('lang', 'buttons.json'), 'r', encoding='utf-8') as f:
     buttons_data = json.load(f)
 
-@router.message(lambda message: message.text in [buttons_data["back"]["en"][0], buttons_data["back"]["uz"][0], buttons_data["back"]["ru"][0]])
-async def back_to_main(message: Message):
-    session = get_session()
-    user = session.query(User).filter_by(user_id=message.from_user.id).first()
-    session.close()
-    await message.answer(
-        messages_data["back_to_menu"][user.lang],
-        reply_markup=remove_keyboard()
-    )
-    await message.answer(
-        messages_data["heres_the_menu"][user.lang],
-        reply_markup=menu_keyboard(lang=user.lang)
-    )
-
 @router.message(lambda message: message.text in [
-    buttons_data["services"]["en"][0],  # Create a content plan
-    buttons_data["services"]["uz"][0],
-    buttons_data["services"]["ru"][0]
+    buttons_data["services"]["en"][3],  # Create a content plan
+    buttons_data["services"]["uz"][3],
+    buttons_data["services"]["ru"][3]
 ])
 async def create_content(message: Message, state: FSMContext):
     session = get_session()
