@@ -15,9 +15,9 @@
         "en": ["🌐 Change language", "💳 Balance settings", "🔙 Back"]
     },
     "services": {
-        "uz": ["📅 Kontent plan yaratish", "🎨 Rasm generatsiya qilish","📚 Story + Reels + Post joylash", "✍️ Storis yozib berish", "🎬 Reels uchun ssenariy yozish", "🧬 Instagram bio yozib berish", "🔙 Orqaga"],
-        "ru": ["📅 Создать контент-план", "🎨 Сгенерировать изображения", "📚 Создать историю + ролики + публикацию", "✍️ Пишите истории", "🎬 Пишите сценарий для роликов", "🧬 Пишите биографию в Instagram", "🔙 Назад"],
-        "en": ["📅 Create a content plan", "🎨 Generate images", "📚 Create Story + Reels + Post", "✍️ Write stories", "🎬 Write a script for Reels", "🧬 Write an Instagram bio", "🔙 Back"]
+        "uz": ["📅 Kontent plan yaratish", "🎨 Rasm generatsiya qilish","📚 Story + Reels + Post joylash", "✍️ Storis yozib berish", "🎬 Reels uchun ssenariy yozish", "🧬 Instagram bio yozib berish", "Saqlangan", "🔙 Orqaga"],
+        "ru": ["📅 Создать контент-план", "🎨 Сгенерировать изображения", "📚 Создать историю + ролики + публикацию", "✍️ Пишите истории", "🎬 Пишите сценарий для роликов", "🧬 Пишите биографию в Instagram", "Сохранено", "🔙 Назад"],
+        "en": ["📅 Create a content plan", "🎨 Generate images", "📚 Create Story + Reels + Post", "✍️ Write stories", "🎬 Write a script for Reels", "🧬 Write an Instagram bio", "Saved", "🔙 Back"]
     },
     "back": {
         "uz": ["🔙 Orqaga"],
@@ -39,9 +39,19 @@
         "ru": ["✅ Принять", "❌ Отмена"],
         "en": ["✅ Accept","❌ Cancel"]
     },
+    "instagram": {
+        "uz": ["🔍 Tekshirish","📤 Yuklash", "🚪 Chiqish"],
+        "ru": ["🔍 Проверить", "📤 Загрузить", "🚪 Выйти"],
+        "en": ["🔍 Check","📤 Upload", "🚪 Log Out"]
+    },
     "feedback": {
         "uz": ["👍 Ha, yoqdi","😐 Neutral","👎 Yo‘q, yoqmadi"],
         "ru": ["👍 Да, мне понравилось", "😐 Нейтрально", "👎 Нет, мне не понравилось"],
         "en": ["👍 Yes, I liked it","😐 Neutral","👎 No, I didn't like it"]
-    }
+    },
+    "type": {
+        "uz": ["Rasmlar", "kontent"],
+        "ru": ["Изображения", "Контент"],
+        "en": ["Images", "Content"]
+    } 
 }

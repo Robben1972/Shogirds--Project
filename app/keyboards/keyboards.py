@@ -12,8 +12,8 @@ def main_menu(lang="en"):
         keyboard=[
             [KeyboardButton(text=buttons[0]), KeyboardButton(text=buttons[1])],  # Content plan, Generate images
             [KeyboardButton(text=buttons[2]), KeyboardButton(text=buttons[3])],  # Story+Reels+Post, Write stories
-            [KeyboardButton(text=buttons[4]), KeyboardButton(text=buttons[5])],  # Write script, Write bio
-            [KeyboardButton(text=buttons[6])]  # Back
+            [KeyboardButton(text=buttons[4]), KeyboardButton(text=buttons[5]), KeyboardButton(text=buttons[6])],  # Write script, Write bio
+            [KeyboardButton(text=buttons[7])]  # Back
         ],
         resize_keyboard=True
     )
@@ -46,13 +46,13 @@ def image_options(lang="en"):
     ])
 
 def instagram_submenu(lang="en"):
-    buttons = button_data["back"][lang] + button_data["acceptence"][lang]  # Back, Accept, Cancel
+    buttons = button_data["back"][lang] + button_data["instagram"][lang]  # Back, Accept, Cancel
     return InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text=buttons[0], callback_data="back_to_main"),  # Back
-            InlineKeyboardButton(text=buttons[1].replace("✅ ", "🔍 "), callback_data="check_scheduled"),  # Check (replace emoji)
-            InlineKeyboardButton(text=buttons[1].replace("✅ ", "📤 "), callback_data="upload_ig"),  # Upload (replace emoji)
-            InlineKeyboardButton(text=buttons[2].replace("❌ ", "🚪 "), callback_data="log_out")  # Log out (replace emoji)
+            InlineKeyboardButton(text=buttons[1], callback_data="check_scheduled"),  # Check (replace emoji)
+            InlineKeyboardButton(text=buttons[2], callback_data="upload_ig"),  # Upload (replace emoji)
+            InlineKeyboardButton(text=buttons[3], callback_data="log_out")  # Log out (replace emoji)
         ]
     ])
 
@@ -79,10 +79,11 @@ def yes_no(lang="en"):
     ])
 
 def saved_contents_menu(lang="en"):
+    buttons = button_data["type"][lang]
     return InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="Content", callback_data="view_content"),  # Static for now; can be added to JSON if needed
-            InlineKeyboardButton(text="Images", callback_data="view_images")
+            InlineKeyboardButton(text=buttons[1], callback_data="view_content"),  # Static for now; can be added to JSON if needed
+            InlineKeyboardButton(text=buttons[0], callback_data="view_images")
         ]
     ])
 

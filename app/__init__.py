@@ -9,13 +9,16 @@ dp = Dispatcher()
 
 def setup():
     init_db()
-    from .handlers import start, content, image, instagram, saved
+    from .handlers import start, content, image, instagram, saved, bio, scenario, stories
     dp.include_routers(
         start.router,
         content.router,
         image.router,
         instagram.router,
-        saved.router
+        saved.router,
+        bio.router,
+        scenario.router,
+        stories.router
     )
 
 __all__ = ['bot', 'dp', 'setup']

@@ -46,9 +46,9 @@ def get_pagination_keyboard(item_type, current_index, total_items, item_id, lang
     return InlineKeyboardMarkup(inline_keyboard=[buttons])
 
 @router.message(lambda message: message.text in [
-    buttons_data["menu"]["en"][1],  # Saved Contents
-    buttons_data["menu"]["uz"][1],
-    buttons_data["menu"]["ru"][1]
+    buttons_data["services"]["en"][6],  # Saved Contents
+    buttons_data["services"]["uz"][6],
+    buttons_data["services"]["ru"][6]
 ])
 async def saved_contents(message: Message):
     session = get_session()
