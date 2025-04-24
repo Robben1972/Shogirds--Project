@@ -21,3 +21,4 @@ def drop_tables_except_users(db_path, tables_to_drop):
 db_path = "bot.db"  
 tables_to_drop = ["contents", "images", "scheduled_posts", "users"]
 drop_tables_except_users(db_path, tables_to_drop)
+

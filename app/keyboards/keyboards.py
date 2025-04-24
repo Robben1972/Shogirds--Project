@@ -36,12 +36,12 @@ def content_options(lang="en"):
     ])
 
 def image_options(lang="en"):
-    buttons = button_data["acceptence"][lang]  # Use "Accept" and "Cancel" for Save/Don't Save
+    buttons = button_data["image"][lang]  # Use "Accept" and "Cancel" for Save/Don't Save
     return InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text=buttons[0], callback_data="save_image"),  # Save
             InlineKeyboardButton(text=buttons[1], callback_data="dont_save_image"),  # Don't Save
-            InlineKeyboardButton(text=button_data["back"][lang][0].replace("🔙 ", ""), callback_data="edit_image")  # Edit (remove emoji for consistency)
+            InlineKeyboardButton(text=buttons[2], callback_data="edit_image")  # Edit (remove emoji for consistency)
         ]
     ])
 

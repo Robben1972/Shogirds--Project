@@ -53,5 +53,10 @@
         "uz": ["Rasmlar", "kontent"],
         "ru": ["Изображения", "Контент"],
         "en": ["Images", "Content"]
-    } 
+    },
+    "image": {
+        "uz": ["✅ Saqlash", "❌ Bekor qilish", "✍️ O'zgartirish"],
+        "ru": ["✅ Сохранить", "❌ Отмена", "✍️ Изменить"],
+        "en": ["✅ Save", "❌ Cancel", "✍️ Edit"]
+    }
 }

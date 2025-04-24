@@ -8,3 +8,4 @@ class Config:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     DATABASE_URL = "sqlite:///bot.db"
     MEDIA_DIR = os.path.join(os.path.dirname(__file__), "media")
+    GOOGLE_GENAI_API_KEY = os.getenv("GOOGLE_GENAI_API_KEY")

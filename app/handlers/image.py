@@ -14,9 +14,13 @@ import requests
 import random
 import string
 import json
+from google import genai
+from google.genai import types
+from PIL import Image as PILImage
+from io import BytesIO
 
 router = Router()
-client = OpenAI(api_key=Config.OPENAI_API_KEY)
+client = genai.Client(api_key=Config.GOOGLE_GENAI_API_KEY)
 
 # Load messages and buttons
 with open(os.path.join('lang', 'messages.json'), 'r', encoding='utf-8') as f:
@@ -66,19 +70,23 @@ async def process_image_desc(message: Message, state: FSMContext):
     )
     # Add sending photo action
     await message.bot.send_chat_action(chat_id=message.chat.id, action="upload_photo")
-    response = client.images.generate(
-        model="dall-e-3",
+    
+    response = client.models.generate_images(
+        model='imagen-3.0-generate-002',
         prompt=desc,
-        n=1,
-        size="1024x1024"
+        config=types.GenerateImagesConfig(
+            number_of_images=1,
+        )
     )
-    image_url = response.data[0].url
+    generated_image = response.generated_images[0]
+    image = PILImage.open(BytesIO(generated_image.image.image_bytes))
+    
     characters = string.ascii_letters + string.digits
     randomize = ''.join(random.choice(characters) for _ in range(10))
     image_path = os.path.join(Config.MEDIA_DIR, f"{message.from_user.id}_{randomize}.jpg")
     os.makedirs(Config.MEDIA_DIR, exist_ok=True)
-    with open(image_path, 'wb') as f:
-        f.write(requests.get(image_url).content)
+    image.save(image_path)  # Save the image locally
+    
     sent_message = await message.answer_photo(
         FSInputFile(path=image_path),
         caption=messages_data["image_caption"][user.lang].format(desc=desc),
@@ -157,21 +165,26 @@ async def process_image_edit(message: Message, state: FSMContext):
     # Add sending photo action
     await message.bot.send_chat_action(chat_id=message.chat.id, action="upload_photo")
     edit_info = message.text
-    new_desc = f"additional prompt: {edit_info}"
-    response = client.images.generate(
-        model="dall-e-3",
-        prompt=f"First prompt: {data['description']}, " + new_desc,
-        n=1,
-        size="1024x1024"
+    new_desc = f"First prompt: {data['description']}, additional prompt: {edit_info}"
+    
+    response = client.models.generate_images(
+        model='imagen-3.0-generate-002',
+        prompt=new_desc,
+        config=types.GenerateImagesConfig(
+            number_of_images=1,
+        )
     )
-    image_url = response.data[0].url
+    generated_image = response.generated_images[0]
+    image = PILImage.open(BytesIO(generated_image.image.image_bytes))
+    
     characters = string.ascii_letters + string.digits
     randomize = ''.join(random.choice(characters) for _ in range(10))
     image_path = os.path.join(Config.MEDIA_DIR, f"{message.from_user.id}_{randomize}.jpg")
-    with open(image_path, 'wb') as f:
-        f.write(requests.get(image_url).content)
+    image.save(image_path)  # Save the image locally
+    
     if os.path.exists(data['image_path']):
         os.remove(data['image_path'])
+    
     sent_message = await message.answer_photo(
         FSInputFile(path=image_path),
         caption=messages_data["edit_image_caption"][user.lang].format(desc=new_desc),
